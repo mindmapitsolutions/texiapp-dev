@@ -1,0 +1,20 @@
+<ion-view view-title="Device Location">
+    <ion-content ng-controller="SendLocationController">
+
+        <div id="map" data-tap-disabled="true"></div>
+
+        <div ng-controller="SendLocationController">
+            <center>
+                <button class="button button-assertive" ng-click="saveMyPos()">
+                    Pass My Data
+                </button><br />
+               These are my lat and long<br />
+                Latitude  : {{dispLat}} <br />
+                Longitude : {{dispLong}}
+                
+            </center>
+        </div>
+
+    </ion-content>
+</ion-view>
+

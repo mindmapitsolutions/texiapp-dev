@@ -1,0 +1,9 @@
+/* Empty. Add your own CSS if you like */
+
+/*****************
+    This is Map Id to display on template
+*****************/
+#map{
+    height: 70%;
+    width: 100%;
+}
