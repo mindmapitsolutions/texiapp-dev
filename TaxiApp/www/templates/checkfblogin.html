@@ -1,9 +1,9 @@
 <ion-view view-title="Facebook Login">
   <ion-content>
-      <div ng-controller="CheckFbLoginController">
-          <button class="button button-block button-positive" ng-click="facebookSignIn()">
-              Log-In Using Facebook
-          </button>
-      </div>
+       <ul class="list" ng-show="todos.length">
+          <li class="item" ng-repeat="todo in todos | filter:statusFilter track by $index">
+              {{todo.lati}}-{{todo.longi}}
+          </li>
+      </ul>
   </ion-content>
 </ion-view>

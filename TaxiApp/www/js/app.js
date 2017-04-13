@@ -32,23 +32,33 @@ angular.module('taxi', ['ionic', 'taxi.controllers'])
         templateUrl: 'templates/menu.html',
         //controller: 'AppCtrl'
     })
-    
+
     .state('app.fblogin', {
         url: '/fblogin',
         views: {
             'menuContent': {
                 templateUrl: 'templates/fblogin.html',
-                controller: 'FbLoginController'
+                controller: 'checkFbLoginController'
             }
         }
     })
+
+        .state('app.directions', {
+            url: '/directions',
+            views: {
+                'menuContent': {
+                    templateUrl: 'templates/directions.html',
+                    controller: 'checkCtrl'
+                }
+            }
+        })
 
     .state('app.checkfblogin', {
         url: '/checkfblogin',
         views: {
             'menuContent': {
                 templateUrl: 'templates/checkfblogin.html',
-                controller: 'CheckFbLoginController'
+                controller: 'TodoCtrl'
             }
         }
     })
@@ -82,15 +92,35 @@ angular.module('taxi', ['ionic', 'taxi.controllers'])
        }
    })
 
-   .state('app.startup', {
-       url: '/startup',
-       views: {
-           'menuContent': {
-               templateUrl: 'templates/startup.html',
-               controller: 'ShowMapController'
-           }
-       }
-   });
+        .state('app.checktoast', {
+            url: '/checktoast',
+            views: {
+                'menuContent': {
+                    templateUrl: 'templates/checktoast.html',
+                    controller: 'checktoastcntrl'
+                }
+            }
+        })
+
+   //.state('app.startup', {
+   //    url: '/startup',
+   //    views: {
+   //        'menuContent': {
+   //            templateUrl: 'templates/startup.html',
+   //            controller: 'ShowMapController'
+   //        }
+   //    }
+   //});
+
+    .state('app.startup', {
+        url: '/startup',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/fblogin.html',
+                controller: 'checkFbLoginController'
+            }
+        }
+    });
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/app/startup');

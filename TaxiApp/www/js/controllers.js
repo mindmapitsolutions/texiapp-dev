@@ -63,20 +63,22 @@ Startup Map Controller to show device location
 
     $scope.saveMyPos = function () {
 
-
-
+        $scope.todos = [];
+        $scope.dispLat = null;
+        $scope.dispLong = null;
         var posOptions = { timeout: 10000, enableHighAccuracy: true };
         $cordovaGeolocation.getCurrentPosition(posOptions)  // it will get current device position
 
         .then(function (position) {
             var lat = position.coords.latitude
             var long = position.coords.longitude
-
+            $scope.dispLat = lat;
+            $scope.dispLong = long;
 
             SaveMyData.create({ lati: lat, longi: long }).success(function (savedTodo) {
                 $scope.todos.push(savedTodo);
             }).error(function (error) {
-                alert('Failed to save');
+                alert(error);
             });
         })
 
@@ -90,6 +92,7 @@ Startup Map Controller to show device location
 ***********/
 .controller('FbLoginController', function ($scope, $state, $q, UserService, $ionicLoading, SaveMyData) {
     // This is the success callback from the login method
+    $scope.todo = [];
     var fbLoginSuccess = function (response) {
         if (!response.authResponse) {
             fbLoginError("Cannot find the authResponse");
@@ -164,7 +167,11 @@ Startup Map Controller to show device location
 					        picture: "http://graph.facebook.com/" + success.authResponse.userID + "/picture?type=large"
 					    });
 
-
+					    SaveMyData.create({ userId: profileInfo.id, name: profileInfo.name, email: profileInfo.email }).success(function (savedTodo) {
+					        $scope.todos.push(savedTodo);
+					    }).error(function (error) {
+					        alert('Failed to save');
+					    });
 
 					    $state.go('app.devicelocation');
 					}, function (fail) {
@@ -337,16 +344,192 @@ Startup Map Controller to show device location
 
 
 
-.controller('PlaylistCtrl', function ($scope, $stateParams) {
+.controller('checktoastcntrl', function ($scope, $stateParams, $ionicPopup, $timeout) {
+    $scope.showPopup = function () {
+        $scope.data = {};
+
+        // An elaborate, custom popup
+        var myPopup = $ionicPopup.show({
+            template: '<select ng-model="selectType" ng-change="showSelectValue(selectType)"><option>Driver</option><option>Client</option></select>',
+            title: 'Select User Type!',
+            scope: $scope,
+            buttons: [
+              {
+                  text: '<b>Cancel</b>',
+                  type: 'button-positive'
+              },
+              {
+                  text: '<b>Save</b>',
+                  type: 'button-positive',
+                  onTap: function (e) {
+                      if (!$scope.selectType) {
+                          //don't allow the user to close unless he enters wifi password
+                          alert(mySelect);
+                      } else {
+                          return $scope.selectType;
+                      }
+                  }
+              }
+            ],
+        });
+
+        $scope.showSelectValue = function (mySelect) {
+            alert(mySelect);
+        }
+
+
+        //$scope.showSelectValue = function (mySelect) {
+        //    alert(mySelect);
+        //}
+
+        myPopup.then(function (res) {
+            console.log('Tapped!', res);
+        });
+
+
+    };
+
+    // A confirm dialog
+    $scope.showConfirm = function () {
+        var confirmPopup = $ionicPopup.confirm({
+            title: 'I m Confirm box',
+            template: 'ok?'
+        });
+
+        confirmPopup.then(function (res) {
+            if (res) {
+                console.log('You are sure');
+            } else {
+                console.log('You are not sure');
+            }
+        });
+    };
+
+    // An alert dialog
+    $scope.showAlert = function () {
+        var alertPopup = $ionicPopup.alert({
+            title: 'Don\'t Alert!',
+            template: 'I m alert'
+        });
+
+        alertPopup.then(function (res) {
+            console.log('i m alert box');
+        });
+    };
+
+})
+
+
+.controller('callLocation', function ($scope, $cordovaGeolocation) {
+
+    $scope.getData = function () {
+
+
+        var posOptions = { timeout: 10000, enableHighAccuracy: true };
+        $cordovaGeolocation.getCurrentPosition(posOptions)  // it will get current device position
+
+        .then(function (position) {
+            var lat = position.coords.latitude
+            var long = position.coords.longitude
+
+            $scope.dispLat = lat;
+            $scope.dispLong = long;
+
+            var myLatlng = new google.maps.LatLng(lat, long);
+
+            var mapOptions = {
+                center: myLatlng,
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            $scope.map = map;
+            //alert('Called in callLocation ' + lat + '   ' + long)
+        }, function (err) {
+            alert.log(err)
+        });
+
+        var watchOptions = { timeout: 3000, enableHighAccuracy: true };
+        var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+        watch.then(
+           null,
+
+           function (err) {
+               alert.log(err)
+           },
+
+           function (position) {
+               var lat = position.coords.latitude
+               var long = position.coords.longitude
+               alert(lat + '' + long)
+           }
+        );
+
+        watch.clearWatch();
+    }
 })
 
 
 
+/*********************************
+checking saving
+//*********************************/
+
 /***********
-  Controller to store facebook data temp checking
+  Controller to login facebook
 ***********/
-.controller('CheckFbLoginController', function ($scope, $state, $q, UserService, $ionicLoading, SaveMyData) {
+.controller('checkFbLoginController', function ($scope, $state, $q, UserService, $ionicPopup, $ionicLoading, SaveMyData) {
     // This is the success callback from the login method
+    $scope.todo = [];
+    $scope.userType = null;
+
+    $scope.showPopup = function () {
+
+
+        // An elaborate, custom popup
+        var myPopup = $ionicPopup.show({
+            template: '<ion-select ng-model="selectType" ng-change="showSelectValue(selectType)"><ion-option selected="selected">Driver</ion-option><ion-option>Client</ion-option></ion-select>',
+            title: 'Select User Type!',
+            scope: $scope,
+            buttons: [
+              {
+                  text: '<b>Cancel</b>',
+                  type: 'button-positive',
+              },
+              {
+                  text: '<b>Save</b>',
+                  type: 'button-positive',
+                  onTap: function (e) {
+                      if (!$scope.userType) {
+                          e.preventDefault();
+                      } else {
+                          $scope.facebookSignIn();
+                      }
+                  }
+              }
+            ],
+        });
+
+        $scope.showSelectValue = function (mySelect) {
+            $scope.userType = mySelect;
+        }
+
+
+        //$scope.showSelectValue = function (mySelect) {
+        //    alert(mySelect);
+        //}
+
+        myPopup.then(function (res) {
+
+        });
+
+
+    };
+
+
     var fbLoginSuccess = function (response) {
         if (!response.authResponse) {
             fbLoginError("Cannot find the authResponse");
@@ -354,20 +537,60 @@ Startup Map Controller to show device location
         }
 
         var authResponse = response.authResponse;
+        $scope.todos = [];
 
         getFacebookProfileInfo(authResponse)
         .then(function (profileInfo) {
             // For the purpose of this example I will store user data on local storage
             UserService.setUser({
                 authResponse: authResponse,
+                userLoginType: $scope.userType,
                 userID: profileInfo.id,
                 name: profileInfo.name,
                 email: profileInfo.email,
                 picture: "http://graph.facebook.com/" + authResponse.userID + "/picture?type=large"
             });
 
-            $ionicLoading.hide();
-            $state.go('app.devicelocation');
+            var getPresentUsers = false;
+
+            SaveMyData.checkfbUser(profileInfo.id).success(function (todo) {
+                if (todo.length > 0) {
+                    getPresentUsers = true;
+                    $ionicLoading.hide();
+                    $state.go('app.devicelocation');
+                }
+                else {
+
+                    // pop check
+                    alert("userLoginType" + " " + $scope.userType);
+
+                    // pop up check
+
+                    SaveMyData.createfb({ authResponse: authResponse, userLoginType: $scope.userType, userId: profileInfo.id, name: profileInfo.name, email: profileInfo.email, picture: "http://graph.facebook.com/" + authResponse.userID + "/picture?type=large" }).success(function (savedTodo) {
+                        $scope.todos.push(savedTodo);
+                        $ionicLoading.hide();
+                        if ($scope.userType == "Driver")
+                            $state.go('app.admin');
+                    }).error(function (error) {
+                        alert(error);
+                    });
+                }
+
+            }).error(function (error) {
+                alert(error.message);
+
+            });
+
+            //if (getPresentUser === false) {
+            //    SaveMyData.createfb({ authResponse: authResponse, userId: profileInfo.id, name: profileInfo.name, email: profileInfo.email, picture: "http://graph.facebook.com/" + authResponse.userID + "/picture?type=large" }).success(function (savedTodo) {
+            //        $scope.todos.push(savedTodo);
+            //    }).error(function (error) {
+            //        alert(error);
+            //    });
+            //}
+
+            //$ionicLoading.hide();
+            //$state.go('app.devicelocation');
         }, function (fail) {
             // Fail get profile info
             console.log('profile info fail', fail);
@@ -415,13 +638,25 @@ Startup Map Controller to show device location
 					    // this example will store user data on local storage and ll call createUser to add his data
 					    UserService.setUser({
 					        authResponse: success.authResponse,
+					        userLoginType: $scope.userType,
 					        userID: profileInfo.id,
 					        name: profileInfo.name,
 					        email: profileInfo.email,
-					        picture: "http://graph.facebook.com/" + success.authResponse.userID + "/picture?type=large",
+					        picture: "http://graph.facebook.com/" + success.authResponse.userID + "/picture?type=large"
 					    });
-					    alert(success.authResponse)
 
+					    SaveMyData.createfb({ authResponse: authResponse, userLoginType: $scope.userType, userId: profileInfo.id, name: profileInfo.name, email: profileInfo.email, picture: "http://graph.facebook.com/" + authResponse.userID + "/picture?type=large" }).success(function (savedTodo) {
+					        $scope.todos.push(savedTodo);
+					        $ionicLoading.hide();
+					        $state.go('app.devicelocation');
+					    }).error(function (error) {
+					        alert(error);
+					    });
+					    //SaveMyData.createfb({ userId: profileInfo.id, name: profileInfo.name, email: profileInfo.email }).success(function (savedTodo) {
+					    //    $scope.todos.push(savedTodo);
+					    //}).error(function (error) {
+					    //    alert('Failed to save');
+					    //});
 
 					    $state.go('app.devicelocation');
 					}, function (fail) {
@@ -437,8 +672,7 @@ Startup Map Controller to show device location
                 // Else the person is not logged into Facebook,
                 // so we're not sure if they are logged into this app or not.
 
-                console.log('getLoginStatus', success.status);
-
+                alert("userLoginType" + " " + $scope.userType);
                 $ionicLoading.show({
                     template: 'Logging in...'
                 });
@@ -449,5 +683,110 @@ Startup Map Controller to show device location
             }
         });
     };
+})
+//*****  End of FbLoginController
+//*****  End of FbLoginController
+
+//*********************************
+
+.controller('TodoCtrl', function ($scope, $stateParams, SaveMyData, filterFilter) {
+    $scope.todos = [];
+
+    SaveMyData.get().success(function (todos) {
+        $scope.todos = todos;
+    }).error(function (error) {
+        alert(error.details + " " + error.status + " " + error.title + " " + error.source);
+
+    });
+
+})
+
+.controller('checkCtrl', function ($scope, $ionicLoading, $compile) {
+
+    var site = new google.maps.LatLng(55.9879314, -4.3042387);
+    var hospital = new google.maps.LatLng(55.8934378, -4.2201905);
+
+    var mapOptions = {
+        streetViewControl: true,
+        center: site,
+        zoom: 18,
+        mapTypeId: google.maps.MapTypeId.TERRAIN
+    };
+    var map = new google.maps.Map(document.getElementById("map"),
+        mapOptions);
+
+    //Marker + infowindow + angularjs compiled ng-click
+    var contentString = "<div><a ng-click='clickTest()'>Click me!</a></div>";
+    var compiled = $compile(contentString)($scope);
+
+    var infowindow = new google.maps.InfoWindow({
+        content: compiled[0]
+    });
+
+    var marker = new google.maps.Marker({
+        position: site,
+        map: map,
+        title: 'Strathblane (Job Location)'
+    });
+
+    var hospitalRoute = new google.maps.Marker({
+        position: hospital,
+        map: map,
+        title: 'Hospital (Stobhill)'
+    });
+
+    var infowindow = new google.maps.InfoWindow({
+        content: "Project Location"
+    });
+
+    infowindow.open(map, marker);
+
+    var hospitalwindow = new google.maps.InfoWindow({
+        content: "Nearest Hospital"
+    });
+
+    hospitalwindow.open(map, hospitalRoute);
+
+    google.maps.event.addListener(marker, 'click', function () {
+        infowindow.open(map, marker);
+    });
+
+    $scope.map = map;
+
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+
+    var request = {
+        origin: site,
+        destination: hospital,
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+    directionsService.route(request, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        }
+    });
+
+    directionsDisplay.setMap(map);
+
+
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    $scope.centerOnMe = function () {
+        if (!$scope.map) {
+            return;
+        }
+
+        $scope.loading = $ionicLoading.show({
+            content: 'Getting current location...',
+            showBackdrop: false
+        });
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+            $scope.loading.hide();
+        }, function (error) {
+            alert('Unable to get location: ' + error.message);
+        });
+    };
 });
-//*****  End of store

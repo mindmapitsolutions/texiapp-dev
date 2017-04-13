@@ -7,26 +7,26 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
-        },
         "cordova-plugin-console": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
+            "PACKAGE_NAME": "com.examples.mindmap"
         },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
-        },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
-        },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.examples.mindmap"
         },
         "cordova-plugin-geolocation": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
+            "PACKAGE_NAME": "com.examples.mindmap"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.examples.mindmap"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.examples.mindmap"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.examples.mindmap"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.examples.mindmap"
         },
         "phonegap-facebook-plugin": {
             "APP_ID": "263718260754121",
@@ -36,7 +36,7 @@
     },
     "dependent_plugins": {
         "cordova-plugin-compat": {
-            "PACKAGE_NAME": "io.cordova.myapp216a27"
+            "PACKAGE_NAME": "com.examples.mindmap"
         }
     }
 }
